@@ -150,7 +150,7 @@ export function TodoDataTable() {
     <>
       {isLoading && <div>Loading...</div>}
       {!isLoading && (
-        <div className="w-full">
+        <div className="h-full w-full overflow-auto">
           <div className="rounded-md border">
             <Table>
               <TableHeader>
@@ -162,9 +162,9 @@ export function TodoDataTable() {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                         </TableHead>
                       )
                     })}

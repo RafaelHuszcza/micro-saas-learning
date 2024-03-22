@@ -52,5 +52,11 @@ export function DashboardPageMain({
   className,
   children,
 }: DashboardPageGenericProps) {
-  return <main className={cn(['p-6', className])}>{children}</main>
+  return (
+    <main
+      className={cn(['max-h-[calc(100vh-3rem)] overflow-auto p-6', className])}
+    >
+      {children}
+    </main>
+  )
 }

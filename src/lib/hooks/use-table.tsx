@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
-import { useQueryString } from '@/hooks'
+import { useQueryString } from '@/lib/hooks'
 
 type Order = 'asc' | 'desc'
 

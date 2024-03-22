@@ -6,7 +6,7 @@ import { MainSidebar } from './_components/main-sidebar'
 
 export default async function Layout({ children }: PropsWithChildren) {
   const session = await auth()
-
+  console.log('session', session)
   return (
     <div className="grid grid-cols-[16rem_1fr]">
       <MainSidebar user={session?.user} />

@@ -1,3 +1,7 @@
 DATABASE_URL="postgresql://admin:admin@localhost:5432/micro_saas?schema=public"
-EMAIL_SERVER=smtp://1ec9bb71bac9b2:dae5e6f72a7f3d@sandbox.smtp.mailtrap.io:2525
-EMAIL_FROM=support@example.com
+EMAIL_SERVER="smtp://1ec9bb71bac9b2:dae5e6f72a7f3d@sandbox.smtp.mailtrap.io:2525"
+EMAIL_FROM="support@example.com"
+NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+NEXTAUTH_URL="http://localhost:3000/"
+AUTH_SECRET="38462d4eca2850ff3165e3900ed7d1c5"
+AUTH_REDIRECT_PROXY_URL="https://localhost:3000/api/auth"
