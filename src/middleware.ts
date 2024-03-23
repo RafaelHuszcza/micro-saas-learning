@@ -21,9 +21,8 @@ const isAuthPage = (pathname: string) => {
   return regex.test(pathname)
 }
 
-export default function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const token = request.cookies.get('authjs.session-token')
-
   const pathname = request.nextUrl.pathname
   const locale = request.nextUrl.pathname.split('/')[1]
   if (!i18n.locales.includes(locale)) {
@@ -32,15 +31,27 @@ export default function middleware(request: NextRequest) {
   if (pathname === `/${locale}`) {
     return NextResponse.next()
   }
-  if (isAuthPage(pathname) && token) {
-    return NextResponse.redirect(new URL(`/${locale}/app`, request.url))
-  }
+
   if (!token && !isAuthPage(pathname)) {
     return NextResponse.redirect(new URL(`/${locale}/auth`, request.url))
   }
-  return NextResponse.next()
-}
+  if (token) {
+    if (isAuthPage(pathname))
+      return NextResponse.redirect(new URL(`/${locale}/app`, request.url))
 
+    const session = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/session`,
+    )
+    if (session.status === 401) {
+      const response = NextResponse.redirect(
+        new URL(`/${locale}/auth`, request.url),
+      )
+      response.cookies.delete('authjs.session-token')
+      return response
+    }
+    return NextResponse.next()
+  }
+}
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 }

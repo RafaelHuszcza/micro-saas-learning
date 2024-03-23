@@ -1,5 +1,7 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import NextAuth from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
 import EmailProvider from 'next-auth/providers/nodemailer'
 
 import { prisma } from '../database'
@@ -20,5 +22,11 @@ export const {
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
     }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+    }),
+    CredentialsProvider({}),
   ],
 })

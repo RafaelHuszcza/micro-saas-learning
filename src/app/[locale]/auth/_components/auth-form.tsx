@@ -71,6 +71,19 @@ export function AuthForm() {
               t('submit-button')
             )}
           </Button>
+          <Button
+            type="button"
+            className="w-full"
+            onClick={() =>
+              signIn('google', { callbackUrl: 'http://localhost:3000/app' })
+            }
+          >
+            {isSubmitting ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              t('submit-button')
+            )}
+          </Button>
         </form>
       </CardContent>
     </Card>
