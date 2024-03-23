@@ -1,6 +1,6 @@
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
+import GitHubProvider from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
 import EmailProvider from 'next-auth/providers/nodemailer'
 
@@ -27,6 +27,10 @@ export const {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       allowDangerousEmailAccountLinking: true,
     }),
-    CredentialsProvider({}),
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+      allowDangerousEmailAccountLinking: true,
+    }),
   ],
 })

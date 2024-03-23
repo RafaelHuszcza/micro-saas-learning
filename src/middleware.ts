@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createIntlMiddleware from 'next-intl/middleware'
 
 import { i18n } from '../i18n-config'
+import { apiClient } from './api'
 
 const authRoutes = ['/auth']
 
@@ -36,11 +37,16 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/auth`, request.url))
   }
   if (token) {
-    if (isAuthPage(pathname))
+    if (isAuthPage(pathname)) {
       return NextResponse.redirect(new URL(`/${locale}/app`, request.url))
-
+    }
     const session = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/session`,
+      {
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      },
     )
     if (session.status === 401) {
       const response = NextResponse.redirect(
@@ -51,6 +57,7 @@ export default async function middleware(request: NextRequest) {
     }
     return NextResponse.next()
   }
+  return NextResponse.next()
 }
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],

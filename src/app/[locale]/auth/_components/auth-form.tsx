@@ -1,90 +1,86 @@
 'use client'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { LoaderCircle } from 'lucide-react'
+import { Github, LoaderCircle } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
+import { useState } from 'react'
 
-import { ErrorMessage } from '@/components/error-message'
+import { GoogleIcon } from '@/components/google'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+
+import { MagicLinkForm } from './magic-link-form'
+
 export function AuthForm() {
+  const [submittingGithub, setSubmittingGithub] = useState(false)
+  const [submittingGoogle, setSubmittingGoogle] = useState(false)
+  const [magicLinkView, setMagicLinkView] = useState(false)
   const t = useTranslations('auth.components.auth-form')
-  const formSchema = z.object({
-    email: z.string().email({ message: t('z.invalid-email') }),
-  })
-
-  type FormData = z.infer<typeof formSchema>
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-  })
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
-  } = form
-  const onSubmit = handleSubmit(async (data: FormData) => {
+  const handleGithubSignIn = async () => {
     try {
-      await signIn('nodemailer', { email: data.email, redirect: false })
-      toast.success(t('toast.success.title'), {
-        description: t('toast.success.description'),
-      })
+      setSubmittingGithub(true)
+      await signIn('github')
+      setSubmittingGithub(false)
     } catch (error) {
-      toast.error(t('toast.error.title'), {
-        description: t('toast.error.description'),
-      })
+      setSubmittingGithub(false)
     }
-  })
-
+  }
+  const handleGoogleSignIn = async () => {
+    try {
+      setSubmittingGoogle(true)
+      await signIn('google')
+      setSubmittingGoogle(false)
+    } catch (error) {
+      setSubmittingGoogle(false)
+    }
+  }
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
-        <CardDescription>{t('description')}</CardDescription>
+        <CardTitle className="text-center text-2xl font-bold">
+          {t('title')}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4" onSubmit={onSubmit}>
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('label')}</Label>
-            <Input
-              id="email"
-              placeholder={t('email-placeholder')}
-              type="email"
-              {...register('email')}
-            />
-            <ErrorMessage errors={errors} name="email" />
-          </div>
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? (
+        <div className="space-y-4">
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={handleGithubSignIn}
+            disabled={submittingGithub}
+          >
+            {submittingGithub ? (
               <LoaderCircle className="animate-spin" />
             ) : (
-              t('submit-button')
+              <div className="flex items-center gap-2">
+                <Github className="h-4 w-4" />
+                {t('github')}
+              </div>
             )}
           </Button>
           <Button
-            type="button"
+            disabled={submittingGoogle}
             className="w-full"
-            onClick={() =>
-              signIn('google', { callbackUrl: 'http://localhost:3000/app' })
-            }
+            variant="outline"
+            onClick={handleGoogleSignIn}
           >
-            {isSubmitting ? (
-              <LoaderCircle className="animate-spin" />
-            ) : (
-              t('submit-button')
-            )}
+            <div className="flex items-center gap-2">
+              <GoogleIcon className="h-4 w-4" />
+              {t('google')}
+            </div>
           </Button>
-        </form>
+        </div>
+        <Separator className="my-8" />
+        {!magicLinkView && (
+          <Button
+            className="w-full"
+            onClick={() => setMagicLinkView((prev) => !prev)}
+          >
+            {t('email')}
+          </Button>
+        )}
+
+        {magicLinkView && <MagicLinkForm />}
       </CardContent>
     </Card>
   )

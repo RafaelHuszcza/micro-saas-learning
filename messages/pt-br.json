@@ -1,9 +1,7 @@
 {
   "auth": {
     "components": {
-      "auth-form": {
-        "title": "Entrar",
-        "description": "Digite seu email para receber um link e acessar sua conta",
+      "magic-link-form": {
         "label": "Email",
         "submit-button": "Enviar Link",
         "email-placeholder": "Digite seu email",
@@ -21,8 +19,12 @@
           }
         }
       },
-      "login": "Entrar",
-      "send": "Enviar Link Mágico"
+      "auth-form": {
+        "github": "Entrar com Github",
+        "google": "Entrar com Google",
+        "email": "Entrar com Email",
+        "title": "Entrar"
+      }
     }
   },
   "app": {
