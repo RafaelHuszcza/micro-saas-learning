@@ -9,12 +9,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 
+import { KeyCloakForm } from './keycloak-form'
 import { MagicLinkForm } from './magic-link-form'
 
 export function AuthForm() {
   const [submittingGithub, setSubmittingGithub] = useState(false)
   const [submittingGoogle, setSubmittingGoogle] = useState(false)
   const [magicLinkView, setMagicLinkView] = useState(false)
+  const [keyCloakView, setKeyCloakView] = useState(false)
   const t = useTranslations('auth.components.auth-form')
   const handleGithubSignIn = async () => {
     try {
@@ -70,17 +72,27 @@ export function AuthForm() {
             </div>
           </Button>
         </div>
-        <Separator className="my-8" />
-        {!magicLinkView && (
-          <Button
-            className="w-full"
-            onClick={() => setMagicLinkView((prev) => !prev)}
-          >
-            {t('email')}
-          </Button>
-        )}
-
-        {magicLinkView && <MagicLinkForm />}
+        <Separator className="my-8 " />
+        <div className="space-y-4">
+          {!magicLinkView && (
+            <Button
+              className="w-full"
+              onClick={() => setMagicLinkView((prev) => !prev)}
+            >
+              {t('email')}
+            </Button>
+          )}
+          {magicLinkView && <MagicLinkForm />}
+          {!keyCloakView && (
+            <Button
+              className="w-full"
+              onClick={() => setKeyCloakView((prev) => !prev)}
+            >
+              {t('email-password')}
+            </Button>
+          )}
+          {keyCloakView && <KeyCloakForm />}
+        </div>
       </CardContent>
     </Card>
   )

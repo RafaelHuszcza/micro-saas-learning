@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createIntlMiddleware from 'next-intl/middleware'
 
 import { i18n } from '../i18n-config'
-import { apiClient } from './api'
+import { auth } from './services/auth'
 
 const authRoutes = ['/auth']
 
@@ -21,9 +21,10 @@ const isAuthPage = (pathname: string) => {
   )
   return regex.test(pathname)
 }
+// https://nextjs.org/docs/app/building-your-application/routing/middleware#runtime
 
 export default async function middleware(request: NextRequest) {
-  const token = request.cookies.get('authjs.session-token')
+  const session = await auth()
   const pathname = request.nextUrl.pathname
   const locale = request.nextUrl.pathname.split('/')[1]
   if (!i18n.locales.includes(locale)) {
@@ -33,28 +34,41 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  if (!token && !isAuthPage(pathname)) {
+  if (!session && !isAuthPage(pathname)) {
     return NextResponse.redirect(new URL(`/${locale}/auth`, request.url))
   }
-  if (token) {
+  if (session) {
     if (isAuthPage(pathname)) {
       return NextResponse.redirect(new URL(`/${locale}/app`, request.url))
     }
-    const session = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/session`,
-      {
-        headers: {
-          Authorization: `Bearer ${token.value}`,
-        },
-      },
-    )
-    if (session.status === 401) {
-      const response = NextResponse.redirect(
-        new URL(`/${locale}/auth`, request.url),
-      )
-      response.cookies.delete('authjs.session-token')
-      return response
-    }
+    // console.log(session)
+    // https://nextjs.org/docs/app/building-your-application/routing/middleware#runtime
+    // if not set prisma Strategy to 'jwt' then we can't use session
+    // const session = await auth()
+    // if (!session) {
+    //   console.log(test)
+    //   const response = NextResponse.redirect(
+    //     new URL(`/${locale}/auth`, request.url),
+    //   )
+    //   response.cookies.delete('authjs.session-token')
+    //   return response
+    // }
+
+    // const session = await fetch(
+    //   `${process.env.NEXT_PUBLIC_API_URL}/auth/session`,
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${token.value}`,
+    //     },
+    //   },
+    // )
+    // if (session.status === 401) {
+    //   const response = NextResponse.redirect(
+    //     new URL(`/${locale}/auth`, request.url),
+    //   )
+    //   response.cookies.delete('authjs.session-token')
+    //   return response
+    // }
     return NextResponse.next()
   }
   return NextResponse.next()

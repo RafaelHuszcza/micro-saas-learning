@@ -4,7 +4,6 @@ import {
   RocketIcon,
 } from '@radix-ui/react-icons'
 import { Session } from 'next-auth'
-import { signOut } from 'next-auth/react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -17,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import keycloakSessionLogOut from '@/utils/keycloakSessionLogOut'
 
 type UserDropdownProps = {
   user: Session['user']
@@ -69,7 +69,7 @@ export function UserDropdown({ user }: UserDropdownProps) {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem onClick={() => keycloakSessionLogOut()}>
           <LockClosedIcon className="mr-3 h-3 w-3" />
           Log out
         </DropdownMenuItem>
