@@ -55,11 +55,13 @@ async function createTodo(input: z.infer<typeof createTodoSchema>) {
   if (!input.title) {
     throw new Error('Title is required')
   }
+
   const todo = await prisma.todo.create({
     data: {
       title: input.title,
       userId: session?.user?.id,
     },
   })
+  console.log('created')
   return todo
 }

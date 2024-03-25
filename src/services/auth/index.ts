@@ -28,12 +28,13 @@ async function refreshAccessToken(token: JWT) {
       cache: 'no-store',
     },
   )
+
   const refreshToken = await response.json()
   return {
     ...token,
     accessToken: refreshToken.accessToken,
-    idToken: refreshToken.idToken,
-    expiresAt: refreshToken.expiresAt,
+    idToken: refreshToken.id_token,
+    expiresAt: new Date().getTime() + refreshToken.expires_in * 1000,
     refreshToken: refreshToken.refreshToken,
   }
 }
@@ -87,7 +88,7 @@ export const {
         token.refreshToken = account.refresh_token
         return token
       }
-      if (new Date().getTime() < token.expiresAt! * 1000 - 60 * 1000) {
+      if (new Date().getTime() < token.expiresAt!) {
         return token
       } else {
         try {

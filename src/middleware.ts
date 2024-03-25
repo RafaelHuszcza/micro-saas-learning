@@ -3,6 +3,7 @@ import createIntlMiddleware from 'next-intl/middleware'
 
 import { i18n } from '../i18n-config'
 import { auth } from './services/auth'
+import keycloakSessionLogOut from './utils/keycloakSessionLogOut'
 
 const authRoutes = ['/auth']
 
@@ -41,7 +42,14 @@ export default async function middleware(request: NextRequest) {
     if (isAuthPage(pathname)) {
       return NextResponse.redirect(new URL(`/${locale}/app`, request.url))
     }
-    // console.log(session)
+    console.log(session)
+    if (session.error === 'RefreshAccessTokenError') {
+      const response = NextResponse.redirect(
+        new URL(`/${locale}/auth`, request.url),
+      )
+      response.cookies.delete('authjs.session-token')
+      return response
+    }
     // https://nextjs.org/docs/app/building-your-application/routing/middleware#runtime
     // if not set prisma Strategy to 'jwt' then we can't use session
     // const session = await auth()

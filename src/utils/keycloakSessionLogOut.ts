@@ -2,8 +2,9 @@ import { signOut } from 'next-auth/react'
 
 export default async function keycloakSessionLogOut() {
   try {
-    const response = await fetch('/api/auth/logout', { method: 'GET' })
-    console.log(response)
+    await fetch(`${process.env.NEXTAUTH_URL}/logout`, {
+      method: 'GET',
+    })
     signOut({ callbackUrl: '/auth' })
   } catch (error) {
     console.log(error)
